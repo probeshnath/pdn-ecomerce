@@ -3,14 +3,21 @@ import { useEffect } from "react"
 import Product from "./Product"
 
 
-const Products = () => {
+const Products = ({handleAddProduct}) => {
     const [products, setProducts] = useState([])
+     let seeallButton = false;
 
     useEffect(()=>{
         fetch("https://fakestoreapi.com/products")
         .then(res => res.json())
-        .then(data => setProducts(data))
+        .then(data => setProducts(data.slice(0,4)))
     },[])
+    const seeAllProduct = () =>{
+        fetch("https://fakestoreapi.com/products")
+        .then(res => res.json())
+        .then(data => setProducts(data))
+        seeallButton = true;
+    } 
   return (
     <div className='flex-1'>
         <div className="flex justify-around items-center mb-5">
@@ -28,15 +35,17 @@ const Products = () => {
         </div>
         <div className="md:grid md:grid-cols-2 gap-3">
             {
-                products.slice(0,4).map(product =>(
-                    <Product key={product.id} product={product} />
+                products.map(product =>(
+                    <Product key={product.id} handleAddProduct={handleAddProduct} product={product} />
                 ))
             }
         </div>
 
         {/* see all */}
         <div className="text-center">
-        <button className="bg-orange-400 text-base px-4 my-7  text-white py-2 rounded-md">See All Products</button>
+         {
+            !seeallButton && <button onClick={seeAllProduct} className="bg-orange-400 text-base px-4 my-7  text-white py-2 rounded-md">See All Products</button>
+         }
         </div>
     </div>
   )
